@@ -9,23 +9,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginScreen());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: Welcome());
   }
 }
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
+            bottom: 170,
             child: Image(
               image: AssetImage(
-                "Images/background1.jpg",
+                "images/background1.jpg",
               ), // Ganti dengan gambar background yang sesuai
               fit: BoxFit.cover,
             ),
@@ -44,7 +44,6 @@ class LoginScreen extends StatelessWidget {
               fit: BoxFit.contain,
             ),
           ),
-          // Bottom Card
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
