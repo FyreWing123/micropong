@@ -15,7 +15,7 @@ class Welcome extends StatelessWidget {
             child: Image(
               image: AssetImage(
                 "images/background1.jpg",
-              ), // Ganti dengan gambar background yang sesuai
+              ),
               fit: BoxFit.cover,
             ),
           ),
@@ -27,7 +27,7 @@ class Welcome extends StatelessWidget {
             child: Image(
               image: AssetImage(
                 "images/logomp.png",
-              ), // Ganti dengan nama file logo
+              ),
               width: 150,
               height: 300,
               fit: BoxFit.contain,
