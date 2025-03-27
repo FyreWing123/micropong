@@ -1,6 +1,6 @@
+import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:aplikasi/LoginScreen/welcome.dart'; // Import WelcomeScreen
-import 'package:aplikasi/LoginScreen/signup.dart'; // Import SignUpScreen
+import 'package:aplikasi/LoginScreen/signup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -137,7 +137,10 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () {
-                  // Tambahkan logika login
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Homepage()),
+                  ); // Tambahkan logika login
                 },
                 child: const Text(
                   "Log In",
