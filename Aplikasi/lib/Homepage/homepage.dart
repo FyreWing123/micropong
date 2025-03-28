@@ -51,7 +51,7 @@ class Homepage extends StatelessWidget {
               ),
             ),
           ),
-        ), pongi kontol
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
