@@ -39,7 +39,7 @@ class Welcome extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               decoration: const BoxDecoration(
-                color: Color(0xFF7C1AFF),
+                color: Color(0xFF9110DC),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),

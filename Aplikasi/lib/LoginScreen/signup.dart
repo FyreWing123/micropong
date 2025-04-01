@@ -34,7 +34,7 @@ class _SignUpState extends State<SignUp> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF7C1AFF),
+                color: Color(0xFF9110DC),
               ),
             ),
             const SizedBox(height: 5),
