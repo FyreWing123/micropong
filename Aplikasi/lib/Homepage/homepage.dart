@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
   const Homepage({super.key});
+
+  @override
+  _HomepageState createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  int _selectedIndex = 0;
+
+  void _onTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,43 +22,29 @@ class Homepage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(65), // Set custom height
+          preferredSize: Size.fromHeight(65),
           child: AppBar(
             backgroundColor: Colors.white,
             elevation: 1,
             title: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10,
-              ), // Adjust left/right padding
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: SizedBox(
-                height: 45, // Adjust search box height
+                height: 45,
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: "Search...",
-                    hintStyle: TextStyle(fontSize: 16),
+                    hintStyle: TextStyle(fontSize: 16, fontFamily: "Poppins"),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        30,
-                      ), // Rounded search bar
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: const Color.fromARGB(
-                      255,
-                      220,
-                      220,
-                      220,
-                    ), // Light background for search bar
+                    fillColor: Color.fromARGB(255, 220, 220, 220),
                     prefixIcon: Padding(
-                      padding: EdgeInsets.only(
-                        left: 15,
-                        right: 10,
-                      ), // Adjust icon position
+                      padding: EdgeInsets.only(left: 15, right: 10),
                       child: Icon(Icons.search, color: Colors.grey, size: 24),
                     ),
-                    prefixIconConstraints: BoxConstraints(
-                      minWidth: 50,
-                    ), // Adjust icon area width
+                    prefixIconConstraints: BoxConstraints(minWidth: 50),
                   ),
                   style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
@@ -57,7 +56,6 @@ class Homepage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              //container iklan
               height: 230,
               width: double.infinity,
               child: PageView.builder(
@@ -76,23 +74,25 @@ class Homepage extends StatelessWidget {
             ),
             SizedBox(height: 30),
             Padding(
-              // populer saat ini
               padding: EdgeInsets.symmetric(horizontal: 18),
               child: Text(
                 "Populer saat ini",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Poppins",
+                ),
               ),
             ),
             SizedBox(height: 14),
             SizedBox(
-              //container populer saat ini
-              height: 200, // Tinggi container
+              height: 200,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 5, // Jumlah item
+                itemCount: 5,
                 itemBuilder: (context, index) {
                   return Container(
-                    width: 200, // Lebar tiap item
+                    width: 200,
                     margin: EdgeInsets.only(
                       left: index == 0 ? 16 : 10,
                       right: 10,
@@ -104,9 +104,9 @@ class Homepage extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Color.fromARGB(50, 0, 0, 0),
-                          blurRadius: 6, // Blur shadow
-                          spreadRadius: 2, // Lebar shadow
-                          offset: Offset(0, 4), // Posisi shadow (x, y)
+                          blurRadius: 6,
+                          spreadRadius: 2,
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
@@ -124,7 +124,6 @@ class Homepage extends StatelessWidget {
             ),
             SizedBox(height: 30),
             Padding(
-              //mau cari ditempat lain?
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 "Mau cari di tempat lain?",
@@ -133,6 +132,48 @@ class Homepage extends StatelessWidget {
             ),
           ],
         ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.purple,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(0),
+              topRight: Radius.circular(0),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(Icons.home, "Home", 0),
+              _buildNavItem(Icons.favorite, "Wishlist", 1),
+              _buildNavItem(Icons.business_center, "Jasa Anda", 2),
+              _buildNavItem(Icons.chat, "Chat", 3),
+              _buildNavItem(Icons.person, "Profile", 4),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    bool isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onTap(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: isSelected ? Colors.white : Colors.white70),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(height: 20),
+        ],
       ),
     );
   }
