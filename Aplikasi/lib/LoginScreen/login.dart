@@ -1,4 +1,5 @@
 import 'package:aplikasi/Homepage/homepage.dart';
+import 'package:aplikasi/LoginScreen/forgotpassword.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/signup.dart';
 
@@ -90,7 +91,12 @@ class _LoginState extends State<Login> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  // Tambahkan navigasi ke halaman lupa password jika ada
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Forgotpassword(),
+                    ),
+                  );
                 },
                 child: const Text(
                   "Forgot your password?",
