@@ -1,3 +1,4 @@
+import 'package:aplikasi/Components/loginbutton.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/LoginScreen/forgotpassword.dart';
 import 'package:flutter/material.dart';
@@ -132,32 +133,15 @@ class _LoginState extends State<Login> {
             const SizedBox(height: 15),
 
             // Login Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Homepage()),
-                  ); // Tambahkan logika login
-                },
-                child: const Text(
-                  "Log In",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
+            LoginButton(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Homepage()),
+                );
+              },
             ),
+
             const SizedBox(height: 20),
 
             // Navigate to Sign Up
