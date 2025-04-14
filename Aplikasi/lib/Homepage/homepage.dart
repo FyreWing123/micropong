@@ -144,7 +144,7 @@ class _HomepageState extends State<Homepage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.home, "Home", 0),
+              _buildNavItem(Icons.home, "Home", 0, ),
               _buildNavItem(Icons.favorite, "Wishlist", 1),
               _buildNavItem(Icons.business_center, "Jasa Anda", 2),
               _buildNavItem(Icons.chat, "Chat", 3),
