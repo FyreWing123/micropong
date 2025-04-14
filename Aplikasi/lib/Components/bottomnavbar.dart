@@ -51,17 +51,12 @@ class CustomNavbar extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 22, top: 15),
       decoration: BoxDecoration(color: backgroundColor),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Padding(padding: EdgeInsets.all(15)),
           _buildNavItem(Icons.home, "Home", 0),
-          Padding(padding: EdgeInsets.all(14)),
           _buildNavItem(Icons.favorite, "Wishlist", 1),
-          Padding(padding: EdgeInsets.all(15)),
           _buildNavItem(Icons.business_center, "Jasa Anda", 2),
-          Padding(padding: EdgeInsets.all(18)),
           _buildNavItem(Icons.chat, "Chat", 3),
-          Padding(padding: EdgeInsets.all(18)),
           _buildNavItem(Icons.person, "Profile", 4),
         ],
       ),
