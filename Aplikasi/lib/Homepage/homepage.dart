@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:aplikasi/Components/bottomnavbar.dart';
-import 'package:flutter/rendering.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -10,11 +8,11 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  int _currentIndex = 0;
+  int _selectedIndex = 0;
 
-  void _onNavTapped(int index) {
+  void _onTap(int index) {
     setState(() {
-      _currentIndex = index;
+      _selectedIndex = index;
     });
   }
 
@@ -132,6 +130,7 @@ class _HomepageState extends State<Homepage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
+<<<<<<< HEAD
             SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 14),
@@ -163,12 +162,52 @@ class _HomepageState extends State<Homepage> {
             ),
             SizedBox(height: 10),
             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+=======
+>>>>>>> 818e3eeacfe7a11bd039be14325d6b0f97bc6d9f
           ],
         ),
-        bottomNavigationBar: CustomNavbar(
-          currentIndex: _currentIndex,
-          onItemTapped: _onNavTapped,
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.purple,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(0),
+              topRight: Radius.circular(0),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(Icons.home, "Home", 0),
+              _buildNavItem(Icons.favorite, "Wishlist", 1),
+              _buildNavItem(Icons.business_center, "Jasa Anda", 2),
+              _buildNavItem(Icons.chat, "Chat", 3),
+              _buildNavItem(Icons.person, "Profile", 4),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    bool isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onTap(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: isSelected ? Colors.white : Colors.white70),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(height: 20),
+        ],
       ),
     );
   }
