@@ -161,6 +161,8 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
             ),
+            SizedBox(height: 10),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
           ],
         ),
         bottomNavigationBar: CustomNavbar(
