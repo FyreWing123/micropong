@@ -1,7 +1,11 @@
+import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/LoginScreen/welcome.dart';
 import 'package:aplikasi/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:aplikasi/LoginScreen/login.dart';
+import 'package:aplikasi/LoginScreen/signup.dart';
+import 'package:aplikasi/LoginScreen/forgotpassword.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +16,17 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Welcome());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Welcome(),
+      initialRoute: Welcome.routeName,
+      routes: {
+        Welcome.routeName: (context) => Welcome(),
+        Login.routeName: (context) => Login(),
+        SignUp.routeName: (context) => SignUp(),
+        Forgotpassword.routeName: (context) => Forgotpassword(),
+        Homepage.routeName: (context) => Homepage(),
+      },
+    );
   }
 }

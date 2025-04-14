@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import './login.dart';
 
 class SignUp extends StatefulWidget {
+  static const routeName = '/signup';
   const SignUp({super.key});
 
   @override
@@ -19,10 +19,9 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: AppBar(leading: Container()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -222,10 +221,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      ); // Kembali ke halaman Login
+                      Navigator.pop(context); // Kembali ke halaman Login
                     },
                     child: const Text(
                       "Log in",

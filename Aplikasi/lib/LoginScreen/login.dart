@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/signup.dart';
 
 class Login extends StatefulWidget {
+  static const routeName = '/login';
   const Login({super.key});
 
   @override
@@ -19,15 +20,9 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context); // Kembali ke WelcomeScreen
-          },
-        ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: AppBar(leading: Container()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -92,12 +87,7 @@ class _LoginState extends State<Login> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Forgotpassword(),
-                    ),
-                  );
+                  Navigator.of(context).pushNamed(Forgotpassword.routeName);
                 },
                 child: const Text(
                   "Forgot your password?",
@@ -135,10 +125,7 @@ class _LoginState extends State<Login> {
             // Login Button
             LoginButton(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Homepage()),
-                );
+                Navigator.of(context).pushNamed(Homepage.routeName);
               },
             ),
 
@@ -155,10 +142,7 @@ class _LoginState extends State<Login> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignUp()),
-                      );
+                      Navigator.of(context).pushNamed(SignUp.routeName);
                     },
                     child: const Text(
                       "Sign Up",

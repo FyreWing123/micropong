@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
-import 'package:flutter/rendering.dart';
 
 class Homepage extends StatefulWidget {
+  static const routeName = '/homepage';
   const Homepage({super.key});
 
   @override

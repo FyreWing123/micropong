@@ -1,8 +1,9 @@
-import 'package:aplikasi/LoginScreen/Signup.dart';
+import 'package:aplikasi/LoginScreen/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/login.dart';
 
 class Welcome extends StatelessWidget {
+  static const routeName = '/welcome';
   const Welcome({super.key});
 
   @override
@@ -76,12 +77,7 @@ class Welcome extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Login(),
-                          ),
-                        );
+                        Navigator.of(context).pushNamed(Login.routeName);
                       },
                       child: const Text(
                         "Log In",
@@ -104,12 +100,7 @@ class Welcome extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUp(),
-                            ),
-                          );
+                          Navigator.of(context).pushNamed(SignUp.routeName);
                         },
                         child: const Text(
                           "Sign Up",
