@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
+import '../Components/Product.dart';
 
 class Homepage extends StatefulWidget {
   static const routeName = '/homepage';
@@ -161,6 +162,15 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
             SizedBox(height: 10),
+            GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: 2,
+              itemBuilder: (BuildContext context, int index) {
+                return;
+              },
+            ),
           ],
         ),
         bottomNavigationBar: CustomNavbar(
