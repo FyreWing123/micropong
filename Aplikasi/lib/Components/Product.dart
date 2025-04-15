@@ -1,9 +1,9 @@
 class Product {
-  final String imageURL;
-  final String judul;
-  final String lokasi;
-  final String startFrom;
-  final int harga;
+  String imageURL;
+  String judul;
+  String lokasi;
+  String startFrom;
+  int harga;
 
   Product({
     required this.imageURL,
