@@ -18,7 +18,7 @@ class CustomNavbar extends StatelessWidget {
         page = Homepage();
         break;
       case 1:
-        page = Wishlist();
+        page = WishlistPage();
         break;
       case 2:
         page = JasaAnda();

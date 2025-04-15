@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         SignUp.routeName: (context) => SignUp(),
         Forgotpassword.routeName: (context) => Forgotpassword(),
         Homepage.routeName: (context) => Homepage(),
-        Wishlist.routeName: (context) => Wishlist(),
+        WishlistPage.routeName: (context) => WishlistPage(),
       },
     );
   }
