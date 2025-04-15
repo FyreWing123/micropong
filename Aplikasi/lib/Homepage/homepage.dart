@@ -1,6 +1,7 @@
 import 'package:aplikasi/Components/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
+import 'package:aplikasi/Components/jasa.dart';
 
 class Homepage extends StatefulWidget {
   static const routeName = '/homepage';
@@ -82,37 +83,114 @@ class _HomepageState extends State<Homepage> {
             ),
             SizedBox(height: 14),
             SizedBox(
-              height: 200,
+              height: 260,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 5,
+                itemCount: jasa.length,
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 itemBuilder: (context, index) {
+                  final item = jasa[index];
                   return Container(
-                    width: 200,
-                    margin: EdgeInsets.only(
-                      left: index == 0 ? 16 : 10,
-                      right: 10,
-                      bottom: 10,
-                    ),
+                    width: 220,
+                    margin: EdgeInsets.only(right: 16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Color.fromARGB(50, 0, 0, 0),
+                          color: Colors.black12,
                           blurRadius: 6,
-                          spreadRadius: 2,
                           offset: Offset(0, 4),
                         ),
                       ],
                     ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Item $index",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                          child: Image.asset(
+                            item['image'],
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item['title'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        item['rating'],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    item['location'],
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                item['name'],
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                "start from",
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                item['price'],
+                                style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -155,7 +233,128 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GridView.builder(
+                physics:
+                    NeverScrollableScrollPhysics(), // supaya scroll tetap di ListView utama
+                shrinkWrap:
+                    true, // penting supaya GridView tidak mengambil semua tinggi
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.73,
+                ),
+                itemCount: jasa.length,
+                itemBuilder: (context, index) {
+                  final item = jasa[index];
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                          child: Image.asset(
+                            item['image'],
+                            height: 100,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(7),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item['title'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        item['rating'],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    item['location'],
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                item['name'],
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                "start from",
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                item['price'],
+                                style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 30),
           ],
         ),
         bottomNavigationBar: CustomNavbar(currentIndex: _currentIndex),
