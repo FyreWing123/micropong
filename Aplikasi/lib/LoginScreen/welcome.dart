@@ -1,4 +1,3 @@
-import 'package:aplikasi/LoginScreen/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/login.dart';
 
@@ -74,13 +73,13 @@ class Welcome extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       onPressed: () {
                         Navigator.of(context).pushNamed(Login.routeName);
                       },
                       child: const Text(
-                        "Log In",
+                        "Get Started!",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -89,30 +88,7 @@ class Welcome extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  // Sign Up Text
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don’t have an account? ",
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamed(SignUp.routeName);
-                        },
-                        child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: Colors.amber,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),

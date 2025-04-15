@@ -1,4 +1,5 @@
 import 'package:aplikasi/Homepage/homepage.dart';
+import 'package:aplikasi/Homepage/wishlist.dart';
 import 'package:aplikasi/LoginScreen/welcome.dart';
 import 'package:aplikasi/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         SignUp.routeName: (context) => SignUp(),
         Forgotpassword.routeName: (context) => Forgotpassword(),
         Homepage.routeName: (context) => Homepage(),
+        Wishlist.routeName: (context) => Wishlist(),
       },
     );
   }
