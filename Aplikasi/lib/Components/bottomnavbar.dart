@@ -1,43 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:aplikasi/Homepage/homepage.dart';
+import 'package:aplikasi/Homepage/wishlist.dart';
+import 'package:aplikasi/Homepage/jasa_anda.dart';
+import 'package:aplikasi/Homepage/chat.dart';
 
 class CustomNavbar extends StatelessWidget {
   final int currentIndex;
-  final Function(int) onItemTapped;
-  final double iconSize;
-  final double fontSize;
-  final Color activeColor;
-  final Color inactiveColor;
-  final Color backgroundColor;
 
-  const CustomNavbar({
-    super.key,
-    required this.currentIndex,
-    required this.onItemTapped,
-    this.iconSize = 28,
-    this.fontSize = 14,
-    this.activeColor = Colors.amber,
-    this.inactiveColor = Colors.white60,
-    this.backgroundColor = Colors.purple,
-  });
+  const CustomNavbar({super.key, required this.currentIndex});
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  void _navigate(BuildContext context, int index) {
+    if (index == currentIndex) return;
+
+    Widget page;
+    switch (index) {
+      case 0:
+        page = Homepage();
+        break;
+      case 1:
+        page = Wishlist();
+        break;
+      case 2:
+        page = JasaAnda();
+        break;
+      case 3:
+        page = Chat();
+        break;
+      default:
+        return;
+    }
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
+  }
+
+  Widget _buildNavItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    int index,
+  ) {
     final isActive = index == currentIndex;
     return GestureDetector(
-      onTap: () => onItemTapped(index),
+      onTap: () => _navigate(context, index),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: iconSize,
-            color: isActive ? activeColor : inactiveColor,
-          ),
-          SizedBox(height: 4),
+          Icon(icon, size: 28, color: isActive ? Colors.amber : Colors.white60),
+          const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              fontSize: fontSize,
-              color: isActive ? activeColor : inactiveColor,
+              fontSize: 14,
+              color: isActive ? Colors.amber : Colors.white60,
             ),
           ),
         ],
@@ -48,16 +62,15 @@ class CustomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 22, top: 15),
-      decoration: BoxDecoration(color: backgroundColor),
+      padding: const EdgeInsets.only(bottom: 22, top: 15),
+      decoration: const BoxDecoration(color: Color(0xFF9110DC)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(Icons.home, "Home", 0),
-          _buildNavItem(Icons.favorite, "Wishlist", 1),
-          _buildNavItem(Icons.business_center, "Jasa Anda", 2),
-          _buildNavItem(Icons.chat, "Chat", 3),
-          _buildNavItem(Icons.person, "Profile", 4),
+          _buildNavItem(context, Icons.home, "Home", 0),
+          _buildNavItem(context, Icons.favorite, "Wishlist", 1),
+          _buildNavItem(context, Icons.business_center, "Jasa Anda", 2),
+          _buildNavItem(context, Icons.chat, "Chat", 3),
         ],
       ),
     );

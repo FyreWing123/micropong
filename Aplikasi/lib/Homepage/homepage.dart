@@ -1,3 +1,4 @@
+import 'package:aplikasi/Components/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
 import '../Components/Product.dart';
@@ -11,13 +12,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  int _currentIndex = 0;
-
-  void _onNavTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+  final int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +23,6 @@ class _HomepageState extends State<Homepage> {
           preferredSize: Size.fromHeight(65),
           child: AppBar(
             backgroundColor: Colors.white,
-            elevation: 1,
             title: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: SizedBox(
@@ -55,6 +49,7 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
         ),
+        drawer: CustomDrawer(),
         body: ListView(
           children: [
             SizedBox(
@@ -173,10 +168,7 @@ class _HomepageState extends State<Homepage> {
             ),
           ],
         ),
-        bottomNavigationBar: CustomNavbar(
-          currentIndex: _currentIndex,
-          onItemTapped: _onNavTapped,
-        ),
+        bottomNavigationBar: CustomNavbar(currentIndex: _currentIndex),
       ),
     );
   }
