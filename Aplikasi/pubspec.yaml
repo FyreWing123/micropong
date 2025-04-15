@@ -58,6 +58,8 @@ flutter:
     - images/background1.jpg
     - images/googlelogo.png
     - images/contoh_gambar.jpg
+    - images/iklan.jpg
+    - images/iklan_2.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,3 +1,4 @@
+import 'package:aplikasi/Detail_Jasa/detail_jasa.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/Homepage/wishlist.dart';
 import 'package:aplikasi/LoginScreen/welcome.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         Forgotpassword.routeName: (context) => Forgotpassword(),
         Homepage.routeName: (context) => Homepage(),
         WishlistPage.routeName: (context) => WishlistPage(),
+        DetailJasa.routeName: (context) => DetailJasa(),
       },
     );
   }
