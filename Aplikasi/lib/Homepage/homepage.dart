@@ -242,7 +242,6 @@ class _HomepageState extends State<Homepage> {
             ),
 
             SizedBox(height: 30),
-            // ✅ Tambahkan judul rekomendasi
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -260,8 +259,7 @@ class _HomepageState extends State<Homepage> {
               child: GridView.builder(
                 physics:
                     NeverScrollableScrollPhysics(), // supaya scroll tetap di ListView utama
-                shrinkWrap:
-                    true, // penting supaya GridView tidak mengambil semua tinggi
+                shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
