@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
 
-class WishlistPage extends StatelessWidget {
+class WishlistPage extends StatefulWidget {
   static const routeName = '/wishlist';
 
+  @override
+  _WishlistPageState createState() => _WishlistPageState();
+}
+
+class _WishlistPageState extends State<WishlistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
