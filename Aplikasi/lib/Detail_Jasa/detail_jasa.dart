@@ -129,6 +129,11 @@ class _DetailJasaState extends State<DetailJasa> {
               ),
             ),
             SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              height: 10.0,
+              color: Colors.grey[300],
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(
@@ -187,7 +192,7 @@ class _DetailJasaState extends State<DetailJasa> {
             ),
             Container(
               width: double.infinity,
-              height: 1.0,
+              height: 10.0,
               color: Colors.grey[300],
             ),
           ],
