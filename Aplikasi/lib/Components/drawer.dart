@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:aplikasi/LoginScreen/login.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -43,7 +45,18 @@ class Logout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(leading: Icon(Icons.logout), title: Text('Logout'));
+    return ListTile(
+      leading: Icon(Icons.logout),
+      title: Text('Logout'),
+      onTap: () async {
+        await FirebaseAuth.instance.signOut();
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Login()),
+          (route) => false,
+        );
+      },
+    );
   }
 }
 

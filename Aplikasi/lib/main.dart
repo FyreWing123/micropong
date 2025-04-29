@@ -4,6 +4,7 @@ import 'package:aplikasi/Homepage/wishlist.dart';
 import 'package:aplikasi/LoginScreen/welcome.dart';
 import 'package:aplikasi/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/login.dart';
 import 'package:aplikasi/LoginScreen/signup.dart';
@@ -21,8 +22,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'Poppins'),
       debugShowCheckedModeBanner: false,
-      home: Welcome(),
-      initialRoute: Welcome.routeName,
       routes: {
         Welcome.routeName: (context) => Welcome(),
         Login.routeName: (context) => Login(),
@@ -32,6 +31,20 @@ class MyApp extends StatelessWidget {
         WishlistPage.routeName: (context) => WishlistPage(),
         DetailJasa.routeName: (context) => DetailJasa(),
       },
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasData) {
+            return const Homepage();
+          } else {
+            return const Welcome();
+          }
+        },
+      ),
     );
   }
 }

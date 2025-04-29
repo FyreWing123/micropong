@@ -3,6 +3,7 @@ import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/LoginScreen/forgotpassword.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/login';
@@ -124,8 +125,27 @@ class _LoginState extends State<Login> {
 
             // Login Button
             LoginButton(
-              onTap: () {
-                Navigator.of(context).pushNamed(Homepage.routeName);
+              onTap: () async {
+                final email = _emailController.text.trim();
+                final password = _passwordController.text.trim();
+
+                try {
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  );
+                  Navigator.of(context).pushNamed(Homepage.routeName);
+                } on FirebaseAuthException catch (e) {
+                  String message = 'Login Failed';
+                  if (e.code == 'user-not-found') {
+                    message = 'Email tidak ditemukan.';
+                  } else if (e.code == 'wrong-password') {
+                    message = 'Password salah.';
+                  }
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
+                }
               },
             ),
 
