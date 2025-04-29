@@ -72,17 +72,120 @@ class _DetailJasaState extends State<DetailJasa> {
             ),
             Container(
               width: double.infinity,
-              height: 5.0,
+              height: 1.0,
+              color: Colors.grey[300],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: AssetImage('images/foto_user.jpg'),
+                    ),
+                    title: Text('Muhammad Yusran Yuris'),
+                    subtitle: Text("Universitas Airlangga"),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 1.0,
               color: Colors.grey[300],
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [SizedBox(height: 16), Text("Deskripsi Produk:")],
+                children: [
+                  SizedBox(height: 16),
+                  Text('''
+🖥️ Mobile, Modern & Responsive – Tampil menarik di HP, tablet, dan laptop.
+
+🎯 SEO Friendly – Optimal agar website mudah ditemukan di Google.
+
+⚡ Kecepatan Maksimal – Loading cepat untuk pengalaman pengguna terbaik.
+
+🔐 Keamanan Website – Kami bantu proteksi website sesuai kebutuhan Anda.
+
+🛠️ Fitur Kustom Sesuai Kebutuhan – Dibuat sesuai keinginan.
+''', style: TextStyle(fontSize: 14)),
+                ],
               ),
             ),
             SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              height: 1.0,
+              color: Colors.grey[300],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Ulasan Pembeli",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(height: 12),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(child: Icon(Icons.person)),
+                    title: Row(
+                      children: [
+                        Text(
+                          "Ael ale",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.star, color: Colors.orange, size: 16),
+                        SizedBox(width: 4),
+                        Text("5.0"),
+                      ],
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        "Pelayanan bagus dan hasil desain sangat memuaskan!",
+                      ),
+                    ),
+                  ),
+                  Divider(height: 10),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(child: Icon(Icons.person)),
+                    title: Row(
+                      children: [
+                        Text(
+                          "Frisol",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.star, color: Colors.orange, size: 16),
+                        SizedBox(width: 4),
+                        Text("2.0"),
+                      ],
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text("Pengerjaannya lama bangetttt"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 1.0,
+              color: Colors.grey[300],
+            ),
           ],
         ),
       ),
