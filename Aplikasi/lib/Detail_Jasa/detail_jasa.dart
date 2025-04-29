@@ -67,6 +67,15 @@ class _DetailJasaState extends State<DetailJasa> {
                       Text('4.8 | 120 terjual'),
                     ],
                   ),
+                  SizedBox(height: 8),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text('Surabaya', style: TextStyle(fontSize: 12)),
+                  ),
                 ],
               ),
             ),
@@ -120,11 +129,6 @@ class _DetailJasaState extends State<DetailJasa> {
               ),
             ),
             SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              height: 1.0,
-              color: Colors.grey[300],
-            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(
@@ -132,7 +136,7 @@ class _DetailJasaState extends State<DetailJasa> {
                 children: [
                   Text(
                     "Ulasan Pembeli",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   SizedBox(height: 12),
                   ListTile(

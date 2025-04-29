@@ -20,6 +20,7 @@ class _HomepageState extends State<Homepage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(65),
           child: AppBar(
