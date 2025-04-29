@@ -1,4 +1,7 @@
+import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:aplikasi/Components/signupbutton.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUp extends StatefulWidget {
   static const routeName = '/signup';
@@ -15,6 +18,62 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _agreeToTerms = false;
+
+  String? _emailError;
+  String? _phoneError;
+  String? _passwordError;
+
+  bool _isEmailValid(String email) {
+    final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$');
+    return regex.hasMatch(email);
+  }
+
+  bool _isPhoneValid(String phone) {
+    final regex = RegExp(r'^[0-9]{9,15}$');
+    return regex.hasMatch(phone);
+  }
+
+  bool _isPasswordValid(String password) {
+    final regex = RegExp(r'^(?=.*\d).{8,}$');
+    return regex.hasMatch(password);
+  }
+
+  void _validateAndSubmit() async {
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final password = _passwordController.text.trim();
+
+    setState(() {
+      _emailError = _isEmailValid(email) ? null : 'Invalid email format';
+      _phoneError = _isPhoneValid(phone) ? null : 'Invalid phone number';
+      _passwordError =
+          _isPasswordValid(password) ? null : 'Min 8 chars with number';
+    });
+
+    if (_emailError == null && _phoneError == null && _passwordError == null) {
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil(Homepage.routeName, (route) => false);
+      } on FirebaseAuthException catch (e) {
+        String message = 'Registration failed';
+        if (e.code == 'email-already-in-use') {
+          message = 'Email is already registered';
+        } else if (e.code == 'weak-password') {
+          message = 'Password is too weak';
+        }
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +127,10 @@ class _SignUpState extends State<SignUp> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                errorText: _emailError,
               ),
             ),
+
             const SizedBox(height: 15),
 
             // Phone Number Field
@@ -99,6 +160,7 @@ class _SignUpState extends State<SignUp> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
+                      errorText: _phoneError,
                     ),
                   ),
                 ),
@@ -128,8 +190,10 @@ class _SignUpState extends State<SignUp> {
                     });
                   },
                 ),
+                errorText: _passwordError,
               ),
             ),
+
             const SizedBox(height: 20),
 
             // Sign Up with Google
@@ -157,7 +221,6 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15),
 
-            // Terms & Conditions Checkbox
             Row(
               children: [
                 Checkbox(
@@ -181,36 +244,9 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 10),
 
-            // Create Account Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                onPressed:
-                    _agreeToTerms
-                        ? () {
-                          // Tambahkan logika sign up
-                        }
-                        : null,
-                child: const Text(
-                  "Create Account",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
+            SignUpButton(enabled: _agreeToTerms, onTap: _validateAndSubmit),
             const SizedBox(height: 20),
 
-            // Navigate to Log In
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -221,7 +257,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pop(context); // Kembali ke halaman Login
+                      Navigator.pop(context);
                     },
                     child: const Text(
                       "Log in",
