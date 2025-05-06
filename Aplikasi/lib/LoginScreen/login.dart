@@ -18,6 +18,43 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
+  String? _emailError;
+  String? _passwordError;
+
+  void _handleLogin() async {
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+    });
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        if (email.isEmpty) _emailError = 'Email tidak boleh kosong';
+        if (password.isEmpty) _passwordError = 'Password tidak boleh kosong';
+      });
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      Navigator.of(context).pushNamed(Homepage.routeName);
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        if (e.code == 'invalid-credential') {
+          _emailError = 'Email atau password salah';
+          _passwordError = 'Email atau password salah';
+        }
+        return;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +79,6 @@ class _LoginState extends State<Login> {
             const Text("Welcome back!", style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 20),
 
-            // Email Field
             const Text("Your Email"),
             const SizedBox(height: 5),
             TextField(
@@ -50,6 +86,7 @@ class _LoginState extends State<Login> {
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: "Enter your email",
+                errorText: _emailError,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -57,7 +94,6 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 15),
 
-            // Password Field
             const Text("Password"),
             const SizedBox(height: 5),
             TextField(
@@ -65,6 +101,7 @@ class _LoginState extends State<Login> {
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 hintText: "Enter your password",
+                errorText: _passwordError,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -81,15 +118,15 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
 
-            // Forgot Password
+            const SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(Forgotpassword.routeName);
-                },
+                onPressed:
+                    () => Navigator.of(
+                      context,
+                    ).pushNamed(Forgotpassword.routeName),
                 child: const Text(
                   "Forgot your password?",
                   style: TextStyle(color: Colors.grey),
@@ -98,60 +135,30 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 20),
 
-            // Log In with Google
             Row(
-              children: [
-                const Expanded(child: Divider(thickness: 1)),
-                const Padding(
+              children: const [
+                Expanded(child: Divider(thickness: 1)),
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: Text("or Log In with"),
                 ),
-                const Expanded(child: Divider(thickness: 1)),
+                Expanded(child: Divider(thickness: 1)),
               ],
             ),
             const SizedBox(height: 15),
             Center(
               child: IconButton(
-                icon: Image.asset(
-                  'images/googlelogo.png',
-                  width: 40,
-                ), // Gunakan logo Google
+                icon: Image.asset('images/googlelogo.png', width: 40),
                 onPressed: () {
-                  // Tambahkan logika login dengan Google
+                  // Add Google login logic
                 },
               ),
             ),
             const SizedBox(height: 15),
 
-            // Login Button
-            LoginButton(
-              onTap: () async {
-                final email = _emailController.text.trim();
-                final password = _passwordController.text.trim();
-
-                try {
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: email,
-                    password: password,
-                  );
-                  Navigator.of(context).pushNamed(Homepage.routeName);
-                } on FirebaseAuthException catch (e) {
-                  String message = 'Login Failed';
-                  if (e.code == 'user-not-found') {
-                    message = 'Email tidak ditemukan.';
-                  } else if (e.code == 'wrong-password') {
-                    message = 'Password salah.';
-                  }
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(message)));
-                }
-              },
-            ),
-
+            LoginButton(onTap: _handleLogin),
             const SizedBox(height: 20),
 
-            // Navigate to Sign Up
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -161,9 +168,8 @@ class _LoginState extends State<Login> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(SignUp.routeName);
-                    },
+                    onTap:
+                        () => Navigator.of(context).pushNamed(SignUp.routeName),
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(
