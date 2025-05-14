@@ -12,20 +12,7 @@
           "package_name": "com.example.aplikasi"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "478157069158-secsr30hnp9hljimmnadj6m3afjgvuno.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.aplikasi",
-            "certificate_hash": "c20fe05ec12713a78d9c90da06dcdd172c3ac34e"
-          }
-        },
-        {
-          "client_id": "478157069158-j8vrimsu9m1vg1kgfpqu3fjpq9jlnr4f.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyDqjxAQJK4SOACnhAwpWYlN2VXLXPHIS20"
@@ -33,19 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "478157069158-j8vrimsu9m1vg1kgfpqu3fjpq9jlnr4f.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "478157069158-h2cjbosfpdghpl4na592h7hicld8tems.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.aplikasi"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
