@@ -2,6 +2,8 @@ import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/signupbutton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUp extends StatefulWidget {
   static const routeName = '/signup';
@@ -42,36 +44,98 @@ class _SignUpState extends State<SignUp> {
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
     final password = _passwordController.text.trim();
+    final username = _usernameController.text.trim();
 
     setState(() {
       _emailError = _isEmailValid(email) ? null : 'Invalid email format';
       _phoneError = _isPhoneValid(phone) ? null : 'Invalid phone number';
       _passwordError =
-          _isPasswordValid(password) ? null : 'Min 8 chars with number';
+          _isPasswordValid(password) ? null : 'Min 8 char with number';
     });
+
+    if (!_agreeToTerms) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("You must agree to the terms.")));
+      return;
+    }
 
     if (_emailError == null && _phoneError == null && _passwordError == null) {
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+        final userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
 
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil(Homepage.routeName, (route) => false);
+        if (userCredential.user != null) {
+          // Optional: Simpan ke Firestore
+          // await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          //   'username': username,
+          //   'email': email,
+          //   'phone': phone,
+          // });
+
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil(Homepage.routeName, (route) => false);
+        }
       } on FirebaseAuthException catch (e) {
         String message = 'Registration failed';
         if (e.code == 'email-already-in-use') {
           message = 'Email is already registered';
         } else if (e.code == 'weak-password') {
           message = 'Password is too weak';
+        } else {
+          message = e.message ?? message;
         }
 
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unexpected error: ${e.toString()}')),
+        );
       }
+    }
+  }
+
+  // 🔑 Google Sign-In function
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return; // User cancelled
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      if (userCredential.user != null) {
+        final user = userCredential.user!;
+
+        // Simpan ke Firestore (optional)
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'username': user.displayName,
+          'email': user.email,
+          'photoURL': user.photoURL,
+          'provider': 'google',
+        }, SetOptions(merge: true));
+
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil(Homepage.routeName, (route) => false);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Google Sign-In failed: $e')));
     }
   }
 
@@ -193,7 +257,6 @@ class _SignUpState extends State<SignUp> {
                 errorText: _passwordError,
               ),
             ),
-
             const SizedBox(height: 20),
 
             // Sign Up with Google
@@ -210,13 +273,8 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(height: 15),
             Center(
               child: IconButton(
-                icon: Image.asset(
-                  'images/googlelogo.png',
-                  width: 40,
-                ), // Gunakan logo Google
-                onPressed: () {
-                  // Tambahkan logika sign up dengan Google
-                },
+                icon: Image.asset('images/googlelogo.png', width: 40),
+                onPressed: _signInWithGoogle,
               ),
             ),
             const SizedBox(height: 15),

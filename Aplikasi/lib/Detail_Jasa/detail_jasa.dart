@@ -29,7 +29,7 @@ class _DetailJasaState extends State<DetailJasa> {
             onPressed: () {},
           ),
           IconButton(
-            icon: Icon(Icons.menu, color: Colors.black),
+            icon: Icon(Icons.more_vert, color: Colors.black),
             onPressed: () {},
           ),
         ],
