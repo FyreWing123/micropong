@@ -1,9 +1,11 @@
 import 'package:aplikasi/Components/loginbutton.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/LoginScreen/forgotpassword.dart';
-import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/signup.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/login';
@@ -52,6 +54,50 @@ class _LoginState extends State<Login> {
         }
         return;
       });
+    }
+  }
+
+  // 🔐 Google Login
+  Future<void> _loginWithGoogle() async {
+    try {
+      print('Mulai login Google...');
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        print('Login dibatalkan');
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      if (userCredential.user != null) {
+        final user = userCredential.user!;
+
+        // Simpan user info ke Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'username': user.displayName,
+          'email': user.email,
+          'photoURL': user.photoURL,
+          'provider': 'google',
+        }, SetOptions(merge: true));
+
+        Navigator.of(context).pushReplacementNamed(Homepage.routeName);
+      }
+    } catch (e) {
+      print('Login Google error: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Login dengan Google gagal: $e')));
     }
   }
 
@@ -118,7 +164,6 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-
             const SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
@@ -149,9 +194,7 @@ class _LoginState extends State<Login> {
             Center(
               child: IconButton(
                 icon: Image.asset('images/googlelogo.png', width: 40),
-                onPressed: () {
-                  // Add Google login logic
-                },
+                onPressed: _loginWithGoogle,
               ),
             ),
             const SizedBox(height: 15),
