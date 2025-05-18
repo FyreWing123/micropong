@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/Homepage/wishlist.dart';
-import 'package:aplikasi/Homepage/jasa_anda.dart';
 import 'package:aplikasi/Homepage/chat.dart';
+import 'package:aplikasi/Homepage/halaman_jasa.dart';
 
 class CustomNavbar extends StatelessWidget {
   final int currentIndex;
@@ -21,7 +21,7 @@ class CustomNavbar extends StatelessWidget {
         page = WishlistPage();
         break;
       case 2:
-        page = JasaAnda();
+        page = HalamanJasa(sudahVerifikasi: true, punyaJasa: false);
         break;
       case 3:
         page = Chat();

@@ -54,22 +54,6 @@ class _HomepageState extends State<Homepage> {
         drawer: CustomDrawer(),
         body: ListView(
           children: [
-            SizedBox(
-              height: 230,
-              width: double.infinity,
-              child: PageView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 230,
-                    child: Image.asset("images/iklan_2.jpg", fit: BoxFit.fill),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 18),
               child: Text(

@@ -1,9 +1,14 @@
 import 'package:aplikasi/Components/bottomnavbar.dart';
 import 'package:flutter/material.dart';
 
-class JasaAnda extends StatelessWidget {
+class JasaAnda extends StatefulWidget {
   static const routeName = '/jasa-anda';
 
+  @override
+  _JasaAndaState createState() => _JasaAndaState();
+}
+
+class _JasaAndaState extends State<JasaAnda> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

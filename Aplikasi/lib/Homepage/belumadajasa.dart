@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
+import 'verifikasi.dart';
 
 class BelumAdaJasa extends StatelessWidget {
   @override
@@ -82,7 +83,7 @@ class BelumAdaJasa extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // TODO: Tambahkan logika navigasi
+                  // TODO: Tambahkan logika navigasi ke fitur pencarian jasa
                 },
                 child: const Text('Mulai Mencari Jasa'),
               ),
@@ -97,12 +98,13 @@ class BelumAdaJasa extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // TODO: Tambahkan logika navigasi ke form pembuatan jasa
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => Verifikasi()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(
-                    0xFFAA00FF,
-                  ), // Warna ungu sesuai desain
+                  backgroundColor: Color(0xFFAA00FF),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

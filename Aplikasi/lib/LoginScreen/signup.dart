@@ -98,7 +98,6 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  // 🔑 Google Sign-In function
   Future<void> _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
