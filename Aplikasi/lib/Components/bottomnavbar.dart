@@ -21,7 +21,7 @@ class CustomNavbar extends StatelessWidget {
         page = WishlistPage();
         break;
       case 2:
-        page = HalamanJasa(sudahVerifikasi: true, punyaJasa: false);
+        page = const HalamanJasa();
         break;
       case 3:
         page = Chat();

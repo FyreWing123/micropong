@@ -1,26 +1,64 @@
 import 'package:flutter/material.dart';
-import 'belumadajasa.dart';
-import 'verifikasi.dart';
-import 'jasa_anda.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:aplikasi/Homepage/belumadajasa.dart';
+import 'package:aplikasi/Homepage/verifikasi.dart';
+import 'package:aplikasi/Homepage/jasa_anda.dart';
 
-class HalamanJasa extends StatelessWidget {
-  final bool sudahVerifikasi;
-  final bool punyaJasa;
+class HalamanJasa extends StatefulWidget {
+  const HalamanJasa({super.key});
+  static const routeName = '/halaman-jasa';
 
-  const HalamanJasa({
-    super.key,
-    required this.sudahVerifikasi,
-    required this.punyaJasa,
-  });
+  @override
+  _HalamanJasaState createState() => _HalamanJasaState();
+}
+
+class _HalamanJasaState extends State<HalamanJasa> {
+  bool? sudahVerifikasi;
+  bool? punyaJasa;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cekStatusUser();
+  }
+
+  Future<void> _cekStatusUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final verifikasi = user.emailVerified;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('jasa')
+        .where('userId', isEqualTo: user.uid)
+        .get();
+
+    final punya = snapshot.docs.isNotEmpty;
+
+    setState(() {
+      sudahVerifikasi = verifikasi;
+      punyaJasa = punya;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (!sudahVerifikasi) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (!(sudahVerifikasi ?? false)) {
       return Verifikasi();
-    } else if (!punyaJasa) {
+    } else if (!(punyaJasa ?? false)) {
       return BelumAdaJasa();
     } else {
       return JasaAnda();
     }
   }
 }
+

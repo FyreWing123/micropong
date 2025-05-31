@@ -31,8 +31,7 @@ class MyApp extends StatelessWidget {
         Homepage.routeName: (context) => Homepage(),
         WishlistPage.routeName: (context) => WishlistPage(),
         DetailJasa.routeName: (context) => DetailJasa(),
-        '/halaman-jasa':
-            (context) => HalamanJasa(sudahVerifikasi: true, punyaJasa: false),
+        HalamanJasa.routeName: (context) => HalamanJasa(),
       },
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
