@@ -1,130 +1,253 @@
-import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
-import 'package:aplikasi/Homepage/verifikasi.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class BelumAdaJasa extends StatelessWidget {
+class BelumAdaJasa extends StatefulWidget {
+  static const routeName = '/belum-ada-jasa';
+
+  @override
+  _BelumAdaJasaState createState() => _BelumAdaJasaState();
+}
+
+class _BelumAdaJasaState extends State<BelumAdaJasa> {
+  bool isLoading = true;
+  bool isProvider = false;
+  bool isVerified = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserStatus();
+  }
+
+  Future<void> checkUserStatus() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = userDoc.data();
+
+      if (data != null) {
+        setState(() {
+          isProvider = data['isProvider'] ?? false;
+          isVerified = data['isVerified'] ?? false;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Gagal ambil data user: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenHeight = mediaQuery.size.height;
-    final contentHeight = screenHeight * 0.85;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 1,
-        title: const Text(
-          'Jasa Anda',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        title: Text(
+          "Jasa Anda",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        elevation: 0,
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: contentHeight),
-          child: IntrinsicHeight(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32),
-                Text(
-                  'Kamu belum mengelola jasa',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Yuk, jangan sia-siakan bakatmu dan buat jasa sekarang di MicroPong. Kelola jasa anda dengan manfaat berikut ini.',
-                  style: TextStyle(fontSize: 15, color: Colors.black54),
-                ),
-                const SizedBox(height: 24),
-                _buildBenefit(
-                  Icons.attach_money,
-                  'Membantu mendapatkan passive income sebagai mahasiswa',
-                ),
-                const SizedBox(height: 16),
-                _buildBenefit(
-                  Icons.chat_bubble_outline,
-                  'Kebebasan bertransaksi dengan metode apapun yang anda mau',
-                ),
-                const SizedBox(height: 16),
-                _buildBenefit(
-                  Icons.calendar_month,
-                  'Tagihan dan sewa jasa tercatat rapi',
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // TODO: Tambahkan logika navigasi ke fitur pencarian jasa
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.deepPurple,
-                      side: const BorderSide(color: Colors.deepPurple),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      textStyle: const TextStyle(fontSize: 16),
-                    ),
-                    child: const Text('Mulai Mencari Jasa'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Center(
-                  child: Text("atau", style: TextStyle(color: Colors.black54)),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => Verifikasi()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 238, 148, 12),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    child: const Text('Buat jasamu sekarang!'),
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body:
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : (!isProvider)
+              ? Center(
+                child: Text("Anda belum terdaftar sebagai penyedia jasa."),
+              )
+              : (!isVerified)
+              ? Center(
+                child: Text("Akun Anda masih menunggu verifikasi admin."),
+              )
+              : buildJasaListView(),
+      floatingActionButton:
+          (isProvider && isVerified)
+              ? FloatingActionButton(
+                onPressed: () {
+                  // Arahkan ke halaman tambah jasa
+                },
+                backgroundColor: Colors.amber,
+                child: Icon(Icons.add, color: Colors.white),
+              )
+              : null,
       bottomNavigationBar: CustomNavbar(currentIndex: 2),
     );
   }
 
-  Widget _buildBenefit(IconData icon, String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 28, color: Colors.deepPurple),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 15, color: Colors.black87),
+  Widget buildJasaListView() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Kelola jasa yang kamu tawarkan di MicroPong!',
+            style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
           ),
+          SizedBox(height: 16),
+          Expanded(
+            child: ListView(
+              children: [
+                JasaCard(
+                  title: 'Desain Web',
+                  location: 'Surabaya',
+                  owner: 'Ahmad Reza',
+                  price: 300000,
+                  status: 'Aktif',
+                  statusColor: Colors.green,
+                  imageUrl: 'https://picsum.photos/id/10/300/200',
+                  borderColor: Colors.transparent,
+                ),
+                JasaCard(
+                  title: 'Editing Foto',
+                  location: 'Surabaya',
+                  owner: 'Ahmad Reza',
+                  price: 150000,
+                  status: 'Aktif',
+                  statusColor: Colors.green,
+                  imageUrl: 'https://picsum.photos/id/20/300/200',
+                  borderColor: Colors.transparent,
+                ),
+                JasaCard(
+                  title: 'Home Design',
+                  location: 'Surabaya',
+                  owner: 'Ahmad Reza',
+                  price: 200000,
+                  status: 'Nonaktif',
+                  statusColor: Colors.grey,
+                  imageUrl: 'https://picsum.photos/id/30/300/200',
+                  borderColor: Colors.transparent,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class JasaCard extends StatelessWidget {
+  final String title;
+  final String location;
+  final String owner;
+  final int price;
+  final String status;
+  final Color statusColor;
+  final String imageUrl;
+  final Color borderColor;
+
+  const JasaCard({
+    Key? key,
+    required this.title,
+    required this.location,
+    required this.owner,
+    required this.price,
+    required this.status,
+    required this.statusColor,
+    required this.imageUrl,
+    required this.borderColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: 2),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2)),
+        ],
+        color: Colors.white,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          children: [
+            Image.network(
+              imageUrl,
+              height: 140,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.purple,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          '📍 $location',
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                        Text(
+                          owner,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'start from',
+                        style: TextStyle(fontSize: 10, color: Colors.black45),
+                      ),
+                      Text(
+                        'Rp${price.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: statusColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          status,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: statusColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.more_vert, color: Colors.black45),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

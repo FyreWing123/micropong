@@ -4,6 +4,8 @@ import 'package:aplikasi/Components/signupbutton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aplikasi/services/firestore_service.dart';
+import 'package:aplikasi/models/user_model.dart';
 
 class SignUp extends StatefulWidget {
   static const routeName = '/signup';
@@ -66,12 +68,24 @@ class _SignUpState extends State<SignUp> {
             .createUserWithEmailAndPassword(email: email, password: password);
 
         if (userCredential.user != null) {
-          // Optional: Simpan ke Firestore
-          // await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-          //   'username': username,
-          //   'email': email,
-          //   'phone': phone,
-          // });
+          final uid = userCredential.user!.uid;
+
+          final newUser = UserModel(
+            name: username,
+            email: email,
+            phoneNumber: phone,
+            isProvider: false,
+            emailVerified: userCredential.user!.emailVerified,
+            phoneVerified: false,
+            isVerified: false,
+            ktmUrl: '',
+            ktpUrl: '',
+            selfieKtpUrl: '',
+            authMethod: 'email',
+            createdAt: DateTime.now(),
+          );
+
+          await FirestoreService().addUser(uid, newUser);
 
           Navigator.of(
             context,

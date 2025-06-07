@@ -1,229 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:aplikasi/Homepage/halaman_jasa.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetailJasa extends StatefulWidget {
-  static const routeName = '/DetailJasa';
-  const DetailJasa({super.key});
+  final String jasaId;
+  const DetailJasa({Key? key, required this.jasaId}) : super(key: key);
 
   @override
   State<DetailJasa> createState() => _DetailJasaState();
 }
 
 class _DetailJasaState extends State<DetailJasa> {
+  DocumentSnapshot? jasa;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchJasa();
+  }
+
+  Future<void> fetchJasa() async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('jasa')
+              .doc(widget.jasaId)
+              .get();
+
+      if (doc.exists) {
+        setState(() {
+          jasa = doc;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching detail jasa: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Detail Jasa")),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (jasa == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Detail Jasa")),
+        body: Center(child: Text("Jasa tidak ditemukan")),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
+        title: Text(jasa!['judul'] ?? 'Detail Jasa'),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.asset('images/contoh_gambar.jpg', fit: BoxFit.cover),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Rp250.000 - Rp500.000',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Desain Logo Profesional Mahasiswa',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange, size: 20),
-                      SizedBox(width: 4),
-                      Text('4.8 | 120 terjual'),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text('Surabaya', style: TextStyle(fontSize: 12)),
-                  ),
-                ],
+            if (jasa!['imageUrl'] != null &&
+                jasa!['imageUrl'].toString().isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(jasa!['imageUrl']),
               ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 1.0,
-              color: Colors.grey[300],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: CircleAvatar(
-                      radius: 24,
-                      backgroundImage: AssetImage('images/foto_user.jpg'),
-                    ),
-                    title: Text('Muhammad Yusran Yuris'),
-                    subtitle: Text("Universitas Airlangga"),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {},
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 1.0,
-              color: Colors.grey[300],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 16),
-                  Text('''
-🖥️ Mobile, Modern & Responsive – Tampil menarik di HP, tablet, dan laptop.
-
-🎯 SEO Friendly – Optimal agar website mudah ditemukan di Google.
-
-⚡ Kecepatan Maksimal – Loading cepat untuk pengalaman pengguna terbaik.
-
-🔐 Keamanan Website – Kami bantu proteksi website sesuai kebutuhan Anda.
-
-🛠️ Fitur Kustom Sesuai Kebutuhan – Dibuat sesuai keinginan.
-''', style: TextStyle(fontSize: 14)),
-                ],
-              ),
+            SizedBox(height: 16),
+            Text(
+              jasa!['judul'],
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              height: 10.0,
-              color: Colors.grey[300],
+            Text(
+              "Rp ${jasa!['harga']}",
+              style: TextStyle(color: Colors.orange),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Ulasan Pembeli",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  SizedBox(height: 12),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: CircleAvatar(child: Icon(Icons.person)),
-                    title: Row(
-                      children: [
-                        Text(
-                          "Ael ale",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Spacer(),
-                        Icon(Icons.star, color: Colors.orange, size: 16),
-                        SizedBox(width: 4),
-                        Text("5.0"),
-                      ],
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Text(
-                        "Pelayanan bagus dan hasil desain sangat memuaskan!",
-                      ),
-                    ),
-                  ),
-                  Divider(height: 10),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: CircleAvatar(child: Icon(Icons.person)),
-                    title: Row(
-                      children: [
-                        Text(
-                          "Frisol",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Spacer(),
-                        Icon(Icons.star, color: Colors.orange, size: 16),
-                        SizedBox(width: 4),
-                        Text("2.0"),
-                      ],
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Text("Pengerjaannya lama bangetttt"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 10.0,
-              color: Colors.grey[300],
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        // tombol aksi tetap di bawah
-        padding: EdgeInsets.all(16),
-        color: Colors.white,
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.chat),
-                label: Text('Chat Pemilik Jasa'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.purple,
-                ),
-                onPressed: () {},
-              ),
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: ElevatedButton(
-                child: Text('Ajukan Pemesanan'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                onPressed: () {},
-              ),
-            ),
+            SizedBox(height: 8),
+            Text(jasa!['lokasi'] ?? ''),
+            SizedBox(height: 16),
+            Text("Deskripsi:", style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 6),
+            Text(jasa!['deskripsi'] ?? 'Tidak ada deskripsi'),
           ],
         ),
       ),

@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi/Components/drawer.dart';
 import 'package:aplikasi/Detail_Jasa/detail_jasa.dart';
-import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
-import 'package:aplikasi/Components/jasa.dart';
 
 class Homepage extends StatefulWidget {
   static const routeName = '/homepage';
@@ -68,127 +68,140 @@ class _HomepageState extends State<Homepage> {
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.builder(
-                physics:
-                    NeverScrollableScrollPhysics(), // supaya scroll tetap di ListView utama
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.73,
-                ),
-                itemCount: jasa.length,
-                itemBuilder: (context, index) {
-                  final item = jasa[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => DetailJasa()),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(16),
+              child: StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection('jasa').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  final docs = snapshot.data!.docs;
+                  return GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 0.73,
+                    ),
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = docs[index];
+                      final data = doc.data() as Map<String, dynamic>;
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DetailJasa(jasaId: doc.id),
                             ),
-                            child: Image.asset(
-                              item['image'],
-                              height: 100,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(7),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16),
+                                ),
+                                child: Image.network(
+                                  data['imageUrl'] ??
+                                      'https://via.placeholder.com/150',
+                                  height: 100,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(7),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Text(
-                                        item['title'],
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
                                     Row(
                                       children: [
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.orange,
-                                          size: 16,
-                                        ),
-                                        Text(
-                                          item['rating'],
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                        Expanded(
+                                          child: Text(
+                                            data['judul'] ?? '-',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
                                           ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.orange,
+                                              size: 16,
+                                            ),
+                                            Text(
+                                              "4.8",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                                SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      size: 14,
-                                      color: Colors.grey,
+                                    SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 14,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          data['lokasi'] ?? '-',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(width: 4),
+                                    SizedBox(height: 2),
                                     Text(
-                                      item['location'],
+                                      data['pemilik'] ?? '-',
                                       style: TextStyle(color: Colors.grey),
                                     ),
+                                    SizedBox(height: 6),
+                                    Text(
+                                      "start from",
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Rp ${data['harga']}",
+                                      style: TextStyle(
+                                        color: Colors.deepPurple,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                SizedBox(height: 2),
-                                Text(
-                                  item['name'],
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "start from",
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  item['price'],
-                                  style: TextStyle(
-                                    color: Colors.deepPurple,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

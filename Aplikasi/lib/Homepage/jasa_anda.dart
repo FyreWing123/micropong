@@ -1,15 +1,17 @@
-import 'package:aplikasi/Components/bottomnavbar.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:aplikasi/Components/bottomnavbar.dart';
+import 'package:aplikasi/Homepage/tambah_jasa.dart';
 
-
-class JasaAnda extends StatefulWidget {
+class Jasa_Anda extends StatefulWidget {
   static const routeName = '/jasa-anda';
 
   @override
-  _JasaAndaState createState() => _JasaAndaState();
+  _Jasa_AndaState createState() => _Jasa_AndaState();
 }
 
-class _JasaAndaState extends State<JasaAnda> {
+class _Jasa_AndaState extends State<Jasa_Anda> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,39 +37,49 @@ class _JasaAndaState extends State<JasaAnda> {
             ),
             SizedBox(height: 16),
             Expanded(
-              child: ListView(
-                children: [
-                  JasaCard(
-                    title: 'Desain Web',
-                    location: 'Surabaya',
-                    owner: 'Ahmad Reza',
-                    price: 300000,
-                    status: 'Aktif',
-                    statusColor: Colors.green,
-                    imageUrl: 'https://picsum.photos/id/10/300/200',
-                    borderColor: Colors.transparent,
-                  ),
-                  JasaCard(
-                    title: 'Editing Foto',
-                    location: 'Surabaya',
-                    owner: 'Ahmad Reza',
-                    price: 150000,
-                    status: 'Aktif',
-                    statusColor: Colors.green,
-                    imageUrl: 'https://picsum.photos/id/20/300/200',
-                    borderColor: Colors.transparent,
-                  ),
-                  JasaCard(
-                    title: 'Home Design',
-                    location: 'Surabaya',
-                    owner: 'Ahmad Reza',
-                    price: 200000,
-                    status: 'Nonaktif',
-                    statusColor: Colors.grey,
-                    imageUrl: 'https://picsum.photos/id/30/300/200',
-                    borderColor: Colors.transparent,
-                  ),
-                ],
+              child: StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance
+                        .collection('jasa')
+                        .where(
+                          'userId',
+                          isEqualTo: FirebaseAuth.instance.currentUser?.uid,
+                        )
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text("Belum ada jasa."));
+                  }
+
+                  final jasaList = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: jasaList.length,
+                    itemBuilder: (context, index) {
+                      final data =
+                          jasaList[index].data() as Map<String, dynamic>;
+
+                      return JasaCard(
+                        title: data['judul'] ?? 'Tanpa Judul',
+                        location: data['lokasi'] ?? '-',
+                        owner: 'Anda',
+                        price: data['harga'] ?? 0,
+                        status: data['status'] ?? 'Aktif',
+                        statusColor:
+                            (data['status'] == 'Aktif')
+                                ? Colors.green
+                                : Colors.grey,
+                        imageUrl:
+                            'https://picsum.photos/seed/${data['judul']}/300/200',
+                        borderColor: Colors.transparent,
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -75,7 +87,10 @@ class _JasaAndaState extends State<JasaAnda> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Tambah Jasa Baru
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => TambahJasa()),
+          );
         },
         backgroundColor: Colors.amber,
         child: Icon(Icons.add, color: Colors.white),

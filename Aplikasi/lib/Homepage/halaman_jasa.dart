@@ -5,15 +5,15 @@ import 'package:aplikasi/Homepage/belumadajasa.dart';
 import 'package:aplikasi/Homepage/verifikasi.dart';
 import 'package:aplikasi/Homepage/jasa_anda.dart';
 
-class HalamanJasa extends StatefulWidget {
-  const HalamanJasa({super.key});
+class Halaman_Jasa extends StatefulWidget {
+  const Halaman_Jasa({super.key});
   static const routeName = '/halaman-jasa';
 
   @override
-  _HalamanJasaState createState() => _HalamanJasaState();
+  _Halaman_JasaState createState() => _Halaman_JasaState();
 }
 
-class _HalamanJasaState extends State<HalamanJasa> {
+class _Halaman_JasaState extends State<Halaman_Jasa> {
   bool? sudahVerifikasi;
   bool? punyaJasa;
   bool isLoading = true;
@@ -30,10 +30,11 @@ class _HalamanJasaState extends State<HalamanJasa> {
 
     final verifikasi = user.emailVerified;
 
-    final snapshot = await FirebaseFirestore.instance
-        .collection('jasa')
-        .where('userId', isEqualTo: user.uid)
-        .get();
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('jasa')
+            .where('userId', isEqualTo: user.uid)
+            .get();
 
     final punya = snapshot.docs.isNotEmpty;
 
@@ -47,9 +48,7 @@ class _HalamanJasaState extends State<HalamanJasa> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (!(sudahVerifikasi ?? false)) {
@@ -57,8 +56,7 @@ class _HalamanJasaState extends State<HalamanJasa> {
     } else if (!(punyaJasa ?? false)) {
       return BelumAdaJasa();
     } else {
-      return JasaAnda();
+      return Jasa_Anda();
     }
   }
 }
-

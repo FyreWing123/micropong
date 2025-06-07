@@ -1,4 +1,3 @@
-import 'package:aplikasi/Detail_Jasa/detail_jasa.dart';
 import 'package:aplikasi/Homepage/halaman_jasa.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/Homepage/wishlist.dart';
@@ -30,9 +29,9 @@ class MyApp extends StatelessWidget {
         Forgotpassword.routeName: (context) => Forgotpassword(),
         Homepage.routeName: (context) => Homepage(),
         WishlistPage.routeName: (context) => WishlistPage(),
-        DetailJasa.routeName: (context) => DetailJasa(),
-        HalamanJasa.routeName: (context) => HalamanJasa(),
+        Halaman_Jasa.routeName: (context) => Halaman_Jasa(),
       },
+
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
 import 'package:aplikasi/Homepage/belumadajasa.dart';
+import 'package:aplikasi/Homepage/prosesverifikasi.dart';
 
 class Verifikasi extends StatefulWidget {
   @override
@@ -8,6 +11,53 @@ class Verifikasi extends StatefulWidget {
 }
 
 class _VerifikasiState extends State<Verifikasi> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  Future<void> submitVerification() async {
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (email.isEmpty || phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Mohon lengkapi email dan nomor telepon")),
+      );
+      return;
+    }
+
+    if (uid == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("User tidak ditemukan")));
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'email': email,
+        'phoneNumber': phone,
+        'isProvider': true,
+        'emailVerified': true,
+        'phoneVerified': true,
+        'isVerified': false, // Nanti admin ubah jadi true
+      });
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Data berhasil dikirim")));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => ProsesVerifikasi()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Terjadi kesalahan: $e")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +76,6 @@ class _VerifikasiState extends State<Verifikasi> {
         ),
         title: Text(
           'Verifikasi Akun',
-          textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -44,6 +93,7 @@ class _VerifikasiState extends State<Verifikasi> {
             const Text('Verifikasi Email'),
             const SizedBox(height: 5),
             TextField(
+              controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: "Masukkan Email Anda",
@@ -53,94 +103,77 @@ class _VerifikasiState extends State<Verifikasi> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text('Verifkasi Nomor Telepon'),
+            const Text('Verifikasi Nomor Telepon'),
             const SizedBox(height: 5),
             TextField(
+              controller: _phoneController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                hintText: "Masukan Nomor Telepon Anda",
+                hintText: "Masukkan Nomor Telepon Anda",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            SizedBox(height: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Verifikasi Identitas (Title + Subtitle)
-                Text(
-                  "Verifikasi Identitas",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  "Kami melindungi informasi dan penggunaan data diri para pengguna kami.",
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-
-                SizedBox(height: 20),
-
-                // Upload Foto Identitas (Title)
-                Text(
-                  "Upload Foto Identitas",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-
-                SizedBox(height: 20),
-
-                // Disclaimer
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF9F9F9),
-                    borderRadius: BorderRadius.circular(8),
+            const SizedBox(height: 20),
+            Text(
+              "Verifikasi Identitas",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              "Kami melindungi informasi dan penggunaan data diri para pengguna kami.",
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Upload Foto Identitas",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Color(0xFFF9F9F9),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Dengan melengkapi formulir ini, penjual telah menyatakan bahwa:",
+                    style: TextStyle(fontSize: 13),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Dengan melengkapi formulir ini, penjual telah menyatakan bahwa:",
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "• Semua info yang diberikan kepada MicroPong adalah akurat, valid, dan terbaru.",
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
-                      Text(
-                        "• Penjual memiliki izin dan kekuasaan penuh sesuai hukum yang berlaku untuk menawarkan jasa di MicroPong.",
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
-                      Text(
-                        "• Semua tindakan yang dilakukan oleh penjual telah sah dan merupakan perjanjian yang berlaku bagi penjual.",
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
-                    ],
+                  SizedBox(height: 6),
+                  Text(
+                    "• Semua info yang diberikan kepada MicroPong adalah akurat, valid, dan terbaru.",
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
-                ),
-
-                SizedBox(height: 24),
-
-                // Tombol Lanjut
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: Text(
-                      "Lanjut",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  Text(
+                    "• Penjual memiliki izin dan kekuasaan penuh sesuai hukum yang berlaku untuk menawarkan jasa di MicroPong.",
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                  Text(
+                    "• Semua tindakan yang dilakukan oleh penjual telah sah dan merupakan perjanjian yang berlaku bagi penjual.",
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: submitVerification,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-              ],
+                child: Text("Lanjut", style: TextStyle(color: Colors.white)),
+              ),
             ),
           ],
         ),
