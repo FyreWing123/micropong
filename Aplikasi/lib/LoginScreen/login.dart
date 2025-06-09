@@ -45,6 +45,27 @@ class _LoginState extends State<Login> {
         email: email,
         password: password,
       );
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .get();
+        if (!doc.exists) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+                'uid': user.uid,
+                'email': user.email,
+                'nama': 'User Baru',
+                'fotoUrl': 'https://i.imgur.com/BoN9kdC.png',
+                'provider': 'email',
+              });
+        }
+      }
+
       Navigator.of(context).pushNamed(Homepage.routeName);
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -84,9 +105,9 @@ class _LoginState extends State<Login> {
         // Simpan user info ke Firestore
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'uid': user.uid,
-          'username': user.displayName,
+          'nama': user.displayName,
           'email': user.email,
-          'photoURL': user.photoURL,
+          'fotoUrl': user.photoURL,
           'provider': 'google',
         }, SetOptions(merge: true));
 

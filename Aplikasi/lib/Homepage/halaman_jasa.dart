@@ -28,19 +28,23 @@ class _Halaman_JasaState extends State<Halaman_Jasa> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final verifikasi = user.emailVerified;
-
     final snapshot =
         await FirebaseFirestore.instance
             .collection('jasa')
             .where('userId', isEqualTo: user.uid)
             .get();
 
-    final punya = snapshot.docs.isNotEmpty;
+    final userDoc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+    final data = userDoc.data();
+    final sudahVerif = data?['isProvider'] == true;
 
     setState(() {
-      sudahVerifikasi = verifikasi;
-      punyaJasa = punya;
+      sudahVerifikasi = sudahVerif;
+      punyaJasa = snapshot.docs.isNotEmpty;
       isLoading = false;
     });
   }
@@ -52,7 +56,7 @@ class _Halaman_JasaState extends State<Halaman_Jasa> {
     }
 
     if (!(sudahVerifikasi ?? false)) {
-      return Verifikasi();
+      return BelumAdaJasa();
     } else if (!(punyaJasa ?? false)) {
       return BelumAdaJasa();
     } else {

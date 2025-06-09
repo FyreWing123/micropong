@@ -12,6 +12,25 @@ class Jasa_Anda extends StatefulWidget {
 }
 
 class _Jasa_AndaState extends State<Jasa_Anda> {
+  String? userName;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName();
+  }
+
+  Future<void> fetchUserName() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      setState(() {
+        userName = userDoc.data()?['name'] ?? 'Anda';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,8 +84,7 @@ class _Jasa_AndaState extends State<Jasa_Anda> {
 
                       return JasaCard(
                         title: data['judul'] ?? 'Tanpa Judul',
-                        location: data['lokasi'] ?? '-',
-                        owner: 'Anda',
+                        owner: userName ?? 'Anda',
                         price: data['harga'] ?? 0,
                         status: data['status'] ?? 'Aktif',
                         statusColor:
@@ -74,7 +92,8 @@ class _Jasa_AndaState extends State<Jasa_Anda> {
                                 ? Colors.green
                                 : Colors.grey,
                         imageUrl:
-                            'https://picsum.photos/seed/${data['judul']}/300/200',
+                            data['imageUrl'] ??
+                            'https://via.placeholder.com/300x200',
                         borderColor: Colors.transparent,
                       );
                     },
@@ -102,7 +121,6 @@ class _Jasa_AndaState extends State<Jasa_Anda> {
 
 class JasaCard extends StatelessWidget {
   final String title;
-  final String location;
   final String owner;
   final int price;
   final String status;
@@ -113,7 +131,6 @@ class JasaCard extends StatelessWidget {
   const JasaCard({
     Key? key,
     required this.title,
-    required this.location,
     required this.owner,
     required this.price,
     required this.status,
@@ -161,10 +178,6 @@ class JasaCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 2),
-                        Text(
-                          '📍 $location',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
                         Text(
                           owner,
                           style: TextStyle(fontSize: 12, color: Colors.black54),

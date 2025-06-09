@@ -13,6 +13,7 @@ class UserModel {
   final String selfieKtpUrl;
   final String authMethod;
   final DateTime createdAt;
+  final String fotoUrl;
 
   UserModel({
     required this.name,
@@ -27,6 +28,7 @@ class UserModel {
     required this.selfieKtpUrl,
     required this.authMethod,
     required this.createdAt,
+    this.fotoUrl = '',
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -43,12 +45,13 @@ class UserModel {
       selfieKtpUrl: json['selfieKtpUrl'] ?? '',
       authMethod: json['authMethod'] ?? 'email',
       createdAt: (json['createdAt'] as Timestamp).toDate(),
+      fotoUrl: json['fotoUrl'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+      'nama': name,
       'email': email,
       'phoneNumber': phoneNumber,
       'isProvider': isProvider,
@@ -60,6 +63,7 @@ class UserModel {
       'selfieKtpUrl': selfieKtpUrl,
       'authMethod': authMethod,
       'createdAt': Timestamp.fromDate(createdAt),
+      'fotoUrl': fotoUrl,
     };
   }
 }

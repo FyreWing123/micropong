@@ -37,9 +37,8 @@ dependencies:
     sdk: flutter
   google_sign_in: ^6.3.0
   http: ^1.3.0
-  firebase_storage: 12.4.5
-  image_picker: ^1.0.0
-  path: ^1.8.0
+  firebase_storage: ^12.4.5
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -62,8 +61,7 @@ flutter:
     - images/background1.jpg
     - images/googlelogo.png
     - images/contoh_gambar.jpg
-    - images/iklan.jpg
-    - images/iklan_2.jpg
+    - images/default_avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

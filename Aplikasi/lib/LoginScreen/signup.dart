@@ -135,9 +135,9 @@ class _SignUpState extends State<SignUp> {
         // Simpan ke Firestore (optional)
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'uid': user.uid,
-          'username': user.displayName,
+          'nama': user.displayName,
           'email': user.email,
-          'photoURL': user.photoURL,
+          'fotoUrl': user.photoURL,
           'provider': 'google',
         }, SetOptions(merge: true));
 

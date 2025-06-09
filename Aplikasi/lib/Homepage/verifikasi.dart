@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
 import 'package:aplikasi/Homepage/belumadajasa.dart';
-import 'package:aplikasi/Homepage/prosesverifikasi.dart';
 
 class Verifikasi extends StatefulWidget {
   @override
@@ -40,16 +39,16 @@ class _VerifikasiState extends State<Verifikasi> {
         'isProvider': true,
         'emailVerified': true,
         'phoneVerified': true,
-        'isVerified': false, // Nanti admin ubah jadi true
+        'isVerified': true,
       });
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Data berhasil dikirim")));
+      ).showSnackBar(SnackBar(content: Text("Data berhasil diverifikasi")));
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => ProsesVerifikasi()),
+        MaterialPageRoute(builder: (_) => BelumAdaJasa()),
       );
     } catch (e) {
       ScaffoldMessenger.of(
@@ -116,21 +115,6 @@ class _VerifikasiState extends State<Verifikasi> {
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              "Verifikasi Identitas",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              "Kami melindungi informasi dan penggunaan data diri para pengguna kami.",
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Upload Foto Identitas",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 20),
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -141,20 +125,20 @@ class _VerifikasiState extends State<Verifikasi> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
-                    "Dengan melengkapi formulir ini, penjual telah menyatakan bahwa:",
+                    "Dengan melengkapi formulir ini, Anda menyatakan bahwa:",
                     style: TextStyle(fontSize: 13),
                   ),
                   SizedBox(height: 6),
                   Text(
-                    "• Semua info yang diberikan kepada MicroPong adalah akurat, valid, dan terbaru.",
+                    "• Semua info yang diberikan adalah akurat, valid, dan terbaru.",
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                   Text(
-                    "• Penjual memiliki izin dan kekuasaan penuh sesuai hukum yang berlaku untuk menawarkan jasa di MicroPong.",
+                    "• Anda memiliki izin dan kuasa penuh untuk menawarkan jasa.",
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                   Text(
-                    "• Semua tindakan yang dilakukan oleh penjual telah sah dan merupakan perjanjian yang berlaku bagi penjual.",
+                    "• Semua tindakan yang dilakukan merupakan perjanjian yang berlaku.",
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                 ],
