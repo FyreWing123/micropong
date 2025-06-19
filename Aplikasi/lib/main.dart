@@ -1,4 +1,3 @@
-import 'package:aplikasi/Homepage/halaman_jasa.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/Homepage/wishlist.dart';
 import 'package:aplikasi/LoginScreen/welcome.dart';
@@ -9,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:aplikasi/LoginScreen/login.dart';
 import 'package:aplikasi/LoginScreen/signup.dart';
 import 'package:aplikasi/LoginScreen/forgotpassword.dart';
+import 'package:aplikasi/Components/editprofile.dart';
+import 'package:aplikasi/HomePage/profile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
         Forgotpassword.routeName: (context) => Forgotpassword(),
         Homepage.routeName: (context) => Homepage(),
         WishlistPage.routeName: (context) => WishlistPage(),
-        Halaman_Jasa.routeName: (context) => Halaman_Jasa(),
+        EditProfile.routeName: (context) => EditProfile(),
+        ProfilePage.routeName: (context) => ProfilePage(),
       },
 
       home: StreamBuilder(

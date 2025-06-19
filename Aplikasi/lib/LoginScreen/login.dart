@@ -5,7 +5,6 @@ import 'package:aplikasi/LoginScreen/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/login';
@@ -45,47 +44,22 @@ class _LoginState extends State<Login> {
         email: email,
         password: password,
       );
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final doc =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .get();
-        if (!doc.exists) {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-                'uid': user.uid,
-                'email': user.email,
-                'nama': 'User Baru',
-                'fotoUrl': 'https://i.imgur.com/BoN9kdC.png',
-                'provider': 'email',
-              });
-        }
-      }
 
-      Navigator.of(context).pushNamed(Homepage.routeName);
+      Navigator.of(context).pushReplacementNamed(Homepage.routeName);
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'invalid-credential') {
           _emailError = 'Email atau password salah';
           _passwordError = 'Email atau password salah';
         }
-        return;
       });
     }
   }
 
   Future<void> _loginWithGoogle() async {
     try {
-      print('Mulai login Google...');
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        print('Login dibatalkan');
-        return;
-      }
+      if (googleUser == null) return;
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
@@ -95,26 +69,10 @@ class _LoginState extends State<Login> {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(
-        credential,
-      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      if (userCredential.user != null) {
-        final user = userCredential.user!;
-
-        // Simpan user info ke Firestore
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'uid': user.uid,
-          'nama': user.displayName,
-          'email': user.email,
-          'fotoUrl': user.photoURL,
-          'provider': 'google',
-        }, SetOptions(merge: true));
-
-        Navigator.of(context).pushReplacementNamed(Homepage.routeName);
-      }
+      Navigator.of(context).pushReplacementNamed(Homepage.routeName);
     } catch (e) {
-      print('Login Google error: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Login dengan Google gagal: $e')));

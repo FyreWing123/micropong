@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi/LoginScreen/login.dart';
+import 'package:aplikasi/HomePage/profile.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
@@ -26,13 +27,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
     if (user != null) {
       final uid = user.uid;
       final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('User').doc(uid).get();
       if (doc.exists) {
         final data = doc.data();
         setState(() {
-          nama = data?['nama'] ?? 'Tanpa Nama';
-          fotoUrl = data?['fotoUrl'] ?? '';
+          nama = data?['username'] ?? 'Tanpa Nama'; // Sesuai field di Firestore
           email = data?['email'] ?? user.email ?? '';
+          fotoUrl = data?['fotoUrl'] ?? ''; // optional, fallback avatar
         });
       }
     }
@@ -81,29 +82,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ],
                 ),
                 Spacer(),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.diamond, color: Colors.amber, size: 25),
-                  title: Text(
-                    'Penyedia Jasa',
-                    style: TextStyle(
-                      color: Colors.amber,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
           ListTile(
-            leading: Icon(Icons.edit),
-            title: Text('Edit Profile'),
+            leading: Icon(Icons.person),
+            title: Text('Profil Saya'),
             onTap: () {
               Navigator.pop(context);
-              // Arahkan ke halaman edit nanti
+              Navigator.pushNamed(context, ProfilePage.routeName);
             },
           ),
+
           ListTile(
             leading: Icon(Icons.history),
             title: Text('Riwayat Pemesanan'),
@@ -111,6 +101,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Navigator.pop(context);
             },
           ),
+
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Logout'),

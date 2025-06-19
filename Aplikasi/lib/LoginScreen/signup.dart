@@ -1,11 +1,10 @@
 import 'package:aplikasi/Homepage/homepage.dart';
+import 'package:aplikasi/LoginScreen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/signupbutton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aplikasi/services/firestore_service.dart';
-import 'package:aplikasi/models/user_model.dart';
 
 class SignUp extends StatefulWidget {
   static const routeName = '/signup';
@@ -70,26 +69,28 @@ class _SignUpState extends State<SignUp> {
         if (userCredential.user != null) {
           final uid = userCredential.user!.uid;
 
-          final newUser = UserModel(
-            name: username,
-            email: email,
-            phoneNumber: phone,
-            isProvider: false,
-            emailVerified: userCredential.user!.emailVerified,
-            phoneVerified: false,
-            isVerified: false,
-            ktmUrl: '',
-            ktpUrl: '',
-            selfieKtpUrl: '',
-            authMethod: 'email',
-            createdAt: DateTime.now(),
-          );
-
-          await FirestoreService().addUser(uid, newUser);
+          await FirebaseFirestore.instance
+              .collection('User') // Nama koleksi
+              .doc(uid) // Gunakan UID sebagai ID dokumen
+              .set({
+                'uid': uid,
+                'username': username,
+                'email': email,
+                'phone': phone,
+                'authMethod': 'email',
+                'isProvider': false,
+                'emailVerified': userCredential.user!.emailVerified,
+                'phoneVerified': false,
+                'isVerified': false,
+                'ktmUrl': '',
+                'ktpUrl': '',
+                'selfieKtpUrl': '',
+                'createdAt': FieldValue.serverTimestamp(),
+              });
 
           Navigator.of(
             context,
-          ).pushNamedAndRemoveUntil(Homepage.routeName, (route) => false);
+          ).pushNamedAndRemoveUntil('/login', (route) => false);
         }
       } on FirebaseAuthException catch (e) {
         String message = 'Registration failed';
@@ -115,7 +116,7 @@ class _SignUpState extends State<SignUp> {
   Future<void> _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return; // User cancelled
+      if (googleUser == null) return;
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
@@ -132,7 +133,6 @@ class _SignUpState extends State<SignUp> {
       if (userCredential.user != null) {
         final user = userCredential.user!;
 
-        // Simpan ke Firestore (optional)
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'uid': user.uid,
           'nama': user.displayName,
@@ -179,7 +179,6 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 20),
 
-            // Username Field
             const Text("Username"),
             const SizedBox(height: 5),
             TextField(
@@ -193,7 +192,6 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15),
 
-            // Email Field
             const Text("Email"),
             const SizedBox(height: 5),
             TextField(
@@ -207,10 +205,8 @@ class _SignUpState extends State<SignUp> {
                 errorText: _emailError,
               ),
             ),
-
             const SizedBox(height: 15),
 
-            // Phone Number Field
             const Text("Phone Number"),
             const SizedBox(height: 5),
             Row(
@@ -245,7 +241,6 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 15),
 
-            // Password Field
             const Text("Password"),
             const SizedBox(height: 5),
             TextField(
@@ -272,7 +267,6 @@ class _SignUpState extends State<SignUp> {
             ),
             const SizedBox(height: 20),
 
-            // Sign Up with Google
             Row(
               children: [
                 const Expanded(child: Divider(thickness: 1)),
