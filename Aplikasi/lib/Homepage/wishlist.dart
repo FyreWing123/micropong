@@ -1,16 +1,39 @@
-import 'package:flutter/material.dart';
 import 'package:aplikasi/Components/bottomnavbar.dart';
+import 'package:aplikasi/Detail_Jasa/detail_jasa.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class WishlistPage extends StatefulWidget {
   static const routeName = '/wishlist';
 
   @override
-  _WishlistPageState createState() => _WishlistPageState();
+  State<WishlistPage> createState() => _WishlistPageState();
 }
 
 class _WishlistPageState extends State<WishlistPage> {
+  User? user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      print("✅ Logged in user ID: ${user!.uid}");
+    } else {
+      print("❌ User belum login");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Wishlist")),
+        body: Center(child: Text("Silakan login terlebih dahulu.")),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -23,133 +46,129 @@ class _WishlistPageState extends State<WishlistPage> {
         ),
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          children: [
-            // Search Field
-            Container(
-              margin: EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black38),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Icon(Icons.search, color: Colors.orange),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'cari di wishlist',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Wishlist Items
-            Expanded(
-              child: ListView.builder(
-                itemCount: 3,
-                itemBuilder: (context, index) => WishlistItem(),
-              ),
-            ),
-          ],
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            FirebaseFirestore.instance
+                .collection('wishlist')
+                .where('userId', isEqualTo: user!.uid)
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("❌ Terjadi error: ${snapshot.error}"));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text("📦 Wishlist kamu kosong."));
+          }
+
+          final wishlistItems = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            itemCount: wishlistItems.length,
+            itemBuilder: (context, index) {
+              final data = wishlistItems[index].data() as Map<String, dynamic>;
+              return WishlistItem(data: data);
+            },
+          );
+        },
       ),
       bottomNavigationBar: CustomNavbar(currentIndex: 1),
     );
   }
 }
 
-class WishlistItem extends StatelessWidget {
+class WishlistItem extends StatefulWidget {
+  final Map<String, dynamic> data;
+  const WishlistItem({required this.data});
+
+  @override
+  State<WishlistItem> createState() => _WishlistItemState();
+}
+
+class _WishlistItemState extends State<WishlistItem> {
+  bool isWishlisted = true;
+
+  Future<void> removeFromWishlist() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final docId = '${user.uid}_${widget.data['jasaId']}';
+    await FirebaseFirestore.instance.collection('wishlist').doc(docId).delete();
+
+    setState(() {
+      isWishlisted = false;
+    });
+  }
+
+  void goToDetail() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetailJasa(jasaId: widget.data['jasaId']),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
+    if (!isWishlisted) return SizedBox(); // tidak ditampilkan setelah dihapus
+
+    return InkWell(
+      onTap: goToDetail,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'images/default_jasa.jpg',
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                widget.data['judul'] ?? 'Tanpa Judul',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // Tag kota
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black38),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text('Surabaya', style: TextStyle(fontSize: 12)),
+                IconButton(
+                  icon: Icon(Icons.favorite, color: Colors.red),
+                  onPressed: removeFromWishlist,
                 ),
-                SizedBox(height: 6),
+                SizedBox(height: 12),
                 Text(
-                  'Desain Interior',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  'Start from',
+                  style: TextStyle(fontSize: 10, color: Colors.black54),
                 ),
-                SizedBox(height: 2),
-                Row(
-                  children: [
-                    Icon(Icons.person, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
-                    Text(
-                      'Muhammad Yusran Yuris',
-                      style: TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      '4.5',
-                      style: TextStyle(fontSize: 12, color: Colors.black87),
-                    ),
-                  ],
+                Text(
+                  'Rp${widget.data['harga'].toString()}',
+                  style: TextStyle(
+                    color: Colors.purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Icon(Icons.favorite, color: Colors.red, size: 24),
-              SizedBox(height: 24),
-              Text(
-                'Start from',
-                style: TextStyle(fontSize: 10, color: Colors.black54),
-              ),
-              Text(
-                'Rp100,000',
-                style: TextStyle(
-                  color: Colors.purple,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

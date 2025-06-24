@@ -47,7 +47,6 @@ class _ChatState extends State<Chat> {
           ),
         ),
       ),
-
       body: StreamBuilder<QuerySnapshot>(
         stream:
             FirebaseFirestore.instance
@@ -72,13 +71,15 @@ class _ChatState extends State<Chat> {
               final friendId = (data['users'] as List).firstWhere(
                 (id) => id != user?.uid,
               );
-              final name = data['userNames'][friendId];
-              final avatar = data['userAvatars'][friendId];
+              final name = data['userNames'][friendId] ?? 'Pengguna';
+              final avatar = data['userAvatars'][friendId] ?? '';
               return ChatItem(
                 imageUrl: avatar,
                 judul: name,
-                subtitle: data['lastMessage'],
-                time: (data['timestamp'] as Timestamp).toDate(),
+                subtitle: data['lastMessage'] ?? '',
+                time:
+                    (data['timestamp'] as Timestamp?)?.toDate() ??
+                    DateTime.now(),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -87,6 +88,7 @@ class _ChatState extends State<Chat> {
                           (_) => ChatDetail(
                             chatId: chats[index].id,
                             friendName: name,
+                            friendId: friendId,
                           ),
                     ),
                   );
@@ -96,7 +98,6 @@ class _ChatState extends State<Chat> {
           );
         },
       ),
-
       bottomNavigationBar: CustomNavbar(currentIndex: 3),
     );
   }
@@ -122,7 +123,12 @@ class ChatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      leading: CircleAvatar(backgroundImage: NetworkImage(imageUrl)),
+      leading: CircleAvatar(
+        backgroundImage:
+            imageUrl.isNotEmpty
+                ? NetworkImage(imageUrl)
+                : AssetImage('images/default_avatar.png') as ImageProvider,
+      ),
       title: Text(judul),
       subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Text(
@@ -136,7 +142,13 @@ class ChatItem extends StatelessWidget {
 class ChatDetail extends StatefulWidget {
   final String chatId;
   final String friendName;
-  ChatDetail({required this.chatId, required this.friendName});
+  final String friendId;
+
+  ChatDetail({
+    required this.chatId,
+    required this.friendName,
+    required this.friendId,
+  });
 
   @override
   _ChatDetailState createState() => _ChatDetailState();
@@ -145,6 +157,32 @@ class ChatDetail extends StatefulWidget {
 class _ChatDetailState extends State<ChatDetail> {
   final TextEditingController _controller = TextEditingController();
   final user = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    createChatIfNotExists();
+  }
+
+  Future<void> createChatIfNotExists() async {
+    final chatRef = FirebaseFirestore.instance
+        .collection('chats')
+        .doc(widget.chatId);
+    final snapshot = await chatRef.get();
+
+    if (!snapshot.exists) {
+      await chatRef.set({
+        'users': [user!.uid, widget.friendId],
+        'userNames': {
+          user!.uid: user!.displayName ?? 'Kamu',
+          widget.friendId: widget.friendName,
+        },
+        'userAvatars': {user!.uid: user!.photoURL ?? '', widget.friendId: ''},
+        'lastMessage': '',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
+  }
 
   void sendMessage() async {
     final text = _controller.text.trim();
@@ -156,14 +194,12 @@ class _ChatDetailState extends State<ChatDetail> {
       'timestamp': FieldValue.serverTimestamp(),
     };
 
-    // Tambahkan ke subcollection messages
     await FirebaseFirestore.instance
         .collection('chats')
         .doc(widget.chatId)
         .collection('messages')
         .add(messageData);
 
-    // Update lastMessage dan timestamp di root chat
     await FirebaseFirestore.instance
         .collection('chats')
         .doc(widget.chatId)
