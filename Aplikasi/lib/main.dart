@@ -10,6 +10,7 @@ import 'package:aplikasi/LoginScreen/signup.dart';
 import 'package:aplikasi/LoginScreen/forgotpassword.dart';
 import 'package:aplikasi/Components/editprofile.dart';
 import 'package:aplikasi/HomePage/profile.dart';
+import 'package:aplikasi/Components/riwayat_pemesanan.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         WishlistPage.routeName: (context) => WishlistPage(),
         EditProfile.routeName: (context) => EditProfile(),
         ProfilePage.routeName: (context) => ProfilePage(),
+        RiwayatPemesanan.routeName: (context) => RiwayatPemesanan(),
       },
 
       home: StreamBuilder(
