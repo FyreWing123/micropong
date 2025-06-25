@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aplikasi/Homepage/homepage.dart';
 import 'package:aplikasi/Homepage/wishlist.dart';
-import 'package:aplikasi/Homepage/chat.dart';
 
 class CustomNavbar extends StatelessWidget {
   final int currentIndex;
@@ -18,9 +17,6 @@ class CustomNavbar extends StatelessWidget {
         break;
       case 1:
         page = WishlistPage();
-        break;
-      case 2:
-        page = Chat();
         break;
       default:
         return;
@@ -65,7 +61,6 @@ class CustomNavbar extends StatelessWidget {
         children: [
           _buildNavItem(context, Icons.home, "Home", 0),
           _buildNavItem(context, Icons.favorite, "Wishlist", 1),
-          _buildNavItem(context, Icons.chat, "Chat", 3),
         ],
       ),
     );
