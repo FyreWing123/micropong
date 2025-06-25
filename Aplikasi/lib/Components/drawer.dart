@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi/LoginScreen/login.dart';
 import 'package:aplikasi/HomePage/profile.dart';
+import 'package:aplikasi/Components/riwayat_pemesanan.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
@@ -99,6 +100,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: Text('Riwayat Pemesanan'),
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, RiwayatPemesanan.routeName);
             },
           ),
 
